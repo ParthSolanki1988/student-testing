@@ -1,0 +1,7 @@
+com/simform/studentslf4j/Service/StudentService.class
+com/simform/studentslf4j/Studentslf4jApplication.class
+com/simform/studentslf4j/Entity/Student.class
+com/simform/studentslf4j/Repository/StudentRepository.class
+com/simform/studentslf4j/Service/Impl/StudentServiceImplementation.class
+com/simform/studentslf4j/Entity/Student$StudentBuilder.class
+com/simform/studentslf4j/Controller/StudentController.class
