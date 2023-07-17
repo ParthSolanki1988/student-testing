@@ -1,33 +1,24 @@
 package com.simform.studentslf4j.Controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.simform.studentslf4j.Entity.Student;
 import com.simform.studentslf4j.Service.Impl.StudentServiceImplementation;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import static org.assertj.core.api.Assertions.assertThat;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -55,77 +46,85 @@ class StudentControllerTest {
   }
 
   /*save student test cases*/
-  @Test
-  void givenStudentObject_whenSaveStudent_thenReturnStudentObject_positive() throws Exception {
-    ObjectMapper objectMapper = new ObjectMapper();
-    String requestJson = objectMapper.writeValueAsString(student);
+  @Nested
+  class saveStudent{
+    @Test
+    void givenStudentObject_whenSaveStudent_thenReturnStudentObject_positive() throws Exception {
+      ObjectMapper objectMapper = new ObjectMapper();
+      String requestJson = objectMapper.writeValueAsString(student);
 
-    when(studentServiceImplementation.createStudent(student)).thenReturn(student);
+      when(studentServiceImplementation.createStudent(student)).thenReturn(student);
 
-    MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/students")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(requestJson))
-            .andDo(print())
-            .andExpect(status().isFound()).andReturn();
+      MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/students")
+                      .contentType(MediaType.APPLICATION_JSON)
+                      .content(requestJson))
+              .andDo(print())
+              .andExpect(status().isCreated()).andReturn();
 
-    String contentAsString = result.getResponse().getContentAsString();
-    assertThat(contentAsString).isEqualTo(requestJson);
-  }
+      String contentAsString = result.getResponse().getContentAsString();
+      assertThat(contentAsString).isEqualTo(requestJson);
+    }
 
-  @Test
-  void givenStudentObject_whenSaveStudent_thenReturnStudentObject_negative() throws Exception {
-    ObjectMapper objectMapper = new ObjectMapper();
-    String requestJson = objectMapper.writeValueAsString(student);
+    @Test
+    void givenStudentObject_whenSaveStudent_thenReturnStudentObject_negative() throws Exception {
+      ObjectMapper objectMapper = new ObjectMapper();
+      String requestJson = objectMapper.writeValueAsString(student);
 
-    when(studentServiceImplementation.createStudent(student3)).thenReturn(student3);
+      when(studentServiceImplementation.createStudent(student3)).thenReturn(student3);
 
-    MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/students"))
-                    .andDo(print())
-                    .andExpect(status().is4xxClientError()).andReturn();
-
+      MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/students"))
+              .andDo(print())
+              .andExpect(status().is4xxClientError()).andReturn();
+    }
   }
   /*End save student test cases*/
 
 
   /*Get All student test cases*/
-  @Test
-  void givenStudentList_whenGetAllStudent_returnStudentList_positive() throws Exception {
-    when(studentServiceImplementation.getAllStudents()).thenReturn(studentList);
-    this.mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/students"))
-            .andDo(print())
-            .andExpect(status().isFound());
-  }
+ @Nested
+ class GetAllStudent{
+    @Test
+    void givenStudentList_whenGetAllStudent_returnStudentList_positive() throws Exception {
+      when(studentServiceImplementation.getAllStudents()).thenReturn(studentList);
+      mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/students"))
+              .andDo(print())
+              .andExpect(status().isFound());
+    }
 
-  @Test
-  void givenStudentList_whenGetAllStudent_returnStudentList_negative() throws Exception {
-    when(studentServiceImplementation.getAllStudents()).thenReturn(studentArrayList);
-    this.mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/students"))
-            .andDo(print())
-            .andExpect(status().isNotFound());
+    @Test
+    void givenStudentList_whenGetAllStudent_returnStudentList_negative() throws Exception {
+      when(studentServiceImplementation.getAllStudents()).thenReturn(studentArrayList);
+      mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/students"))
+              .andDo(print())
+              .andExpect(status().isNotFound());
+    }
   }
   /*End Get All student test cases*/
 
 
   /* Get student By Id Test cases*/
 
-  @Test
-  void givenStudentId_whenGetStudentById_thenReturnStudentObject_positive() throws Exception {
+ @Nested
+ class GetStudentById{
+   @Test
+   void givenStudentId_whenGetStudentById_thenReturnStudentObject_positive() throws Exception {
 
-    //given
-    when(studentServiceImplementation.findById(student.getId())).thenReturn(student);
+     //given
+     when(studentServiceImplementation.findById(student.getId())).thenReturn(student);
 
-    this.mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/students/1010"))
-            .andDo(print())
-            .andExpect(status().isFound());
-  }
+     mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/students/1010"))
+             .andDo(print())
+             .andExpect(status().isFound());
+   }
 
-  @Test
-  void givenStudentId_whenGetStudentById_thenReturnStudentObject_negative() throws Exception {
-    when(studentServiceImplementation.findById(student.getId())).thenReturn(student);
-    this.mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/students/101"))
-            .andDo(print())
-            .andExpect(status().isNotFound());
-  }
+   @Test
+   void givenStudentId_whenGetStudentById_thenReturnStudentObject_negative() throws Exception {
+     when(studentServiceImplementation.findById(student.getId())).thenReturn(student);
+     mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/students/101"))
+             .andDo(print())
+             .andExpect(status().isNotFound());
+   }
+ }
   /* End Get student By Id Test cases*/
 
 

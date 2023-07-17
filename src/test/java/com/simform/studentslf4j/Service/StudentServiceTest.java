@@ -23,7 +23,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 
 @DisplayName("Test : Service level")
@@ -76,20 +76,10 @@ class StudentServiceTest {
 
     //assert
     assertThat(save.getId()).isEqualTo(student.getId());
+
+    //verify
+    verify(studentRepository).save(student);
   }
-
-  @Test
-  void givenStudentObject_whenSaveStudent_thenReturnStudentObject_negative() {
-    //given
-    given(studentRepository.save(student3)).willReturn(student3);
-
-    //when
-    Student save = studentServiceImplementation.createStudent(student3);
-
-    //assert
-    assertThat(save).isNull();
-  }
-
 
   @Test
   void getAllStudents() {

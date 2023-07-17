@@ -37,8 +37,17 @@ public class StudentController {
   @GetMapping
   public ResponseEntity<List<Student>> getAllStudents(){
     log.info("Getting all student ");
+
+
     List<Student> listOfStudent = studentService.getAllStudents();
-    return new ResponseEntity<>(listOfStudent , HttpStatus.FOUND);
+
+    if (!listOfStudent.isEmpty()){
+      return new ResponseEntity<>(listOfStudent , HttpStatus.FOUND);
+    }
+    else {
+      throw new NotFoundException("Student List Not Found");
+    }
+
   }
 
 
