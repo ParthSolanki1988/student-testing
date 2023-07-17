@@ -10,6 +10,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import java.util.List;
 import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("Test : Repository level")
@@ -22,7 +23,8 @@ class StudentRepositoryTest {
 
   Student student;
 
-  Student nullStudent;
+  Student savedStudent;
+  Student student2;
 
 
   @BeforeEach
@@ -32,38 +34,43 @@ class StudentRepositoryTest {
             .name("MihirRaj")
             .technology("Stack")
             .build();
+     savedStudent = studentRepository.save(student);
   }
 
   @Test
   @DisplayName("Test : save()")
   void saveTestSuccess(){
-    //Act
-    Student saveStudent = studentRepository.save(student);
-
-    //Asserts
-    assertThat(saveStudent).isNotNull();
+    student2 = Student.builder()
+            .id(1012L)
+            .name("Arpit")
+            .technology("KOTA")
+            .build();
+    savedStudent = studentRepository.save(student2);
+    Student actualStudent = studentRepository.findById(student2.getId()).get();
+    assertThat(actualStudent).isEqualTo(savedStudent);
   }
 
   @Test
   @DisplayName("Test : FindAll()")
   void findAllTest() {
-    List<Student> all = studentRepository.findAll();
-    assertThat(all).isNotNull();
+    List<Student> studentList = studentRepository.findAll();
+    assertThat(studentList.size()).isEqualTo(13);
   }
 
   @Test
   @DisplayName("Test : FindById()")
   void findByIdTest() {
-    Optional<Student> optionalStudent = studentRepository.findById(student.getId());
-    assertThat(optionalStudent).isNotNull();
+    student2 = studentRepository.findById(1010L).get();
+    assertThat(student2.getId()).isEqualTo(student.getId());
+
   }
 
   @Test
   @DisplayName("Test : DeleteById()")
   public void deleteById(){
-    studentRepository.deleteById(student.getId());
+    studentRepository.deleteById(1010L);
     Optional<Student> optionalStudent = studentRepository.findById(student.getId());
-    assertThat(optionalStudent).isEmpty();
+    assertThat(optionalStudent.isPresent()).isFalse();
   }
 
   @AfterEach
