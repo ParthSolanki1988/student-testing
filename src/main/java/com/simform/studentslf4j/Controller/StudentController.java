@@ -8,8 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -70,18 +68,11 @@ public class StudentController {
   // http://localhost:8080/api/v1/students/{id}
   @PutMapping("{id}")
     public ResponseEntity<Student> updatedStudent(@PathVariable("id") Long id,@RequestBody Student student){
-    boolean isDigit = true;
 
-   if (id == 0 || id < 0){
-     log.warn("Enter Valid Id for update student");
-     return null;
-   }
-   else {
      log.info("updating the student , Id : " + id );
      student.setId(id);
      Student updateStudents = studentService.updateStudent(student);
      return new ResponseEntity<>(updateStudents , HttpStatus.OK);
-   }
   }
 
 
@@ -89,17 +80,10 @@ public class StudentController {
 
   // http://localhost:8080/api/v1/students/{id}
   @DeleteMapping("{id}")
-  public ResponseEntity<String> deleteStudent(@PathVariable long id){
-    if (id == 0 || id < 0){
-      log.warn("Enter Valid id for delete student");
-      return null;
-    }
-    else{
+  public ResponseEntity<Student> deleteStudent(@PathVariable long id){
       log.info("deleting the Student, Id:" + id);
-      studentService.deleteStudent(id);
-      return new ResponseEntity<>("Delete Student Successfully!" , HttpStatus.OK);
-    }
-
+      Student student = studentService.deleteStudent(id);
+      return new ResponseEntity<>(student , HttpStatus.OK);
   }
 
 

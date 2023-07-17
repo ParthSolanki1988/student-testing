@@ -51,24 +51,31 @@ public class StudentServiceImplementation implements StudentService {
 
   @Override
   public Student updateStudent(Student student) {
-    Student existingStudent = studentRepository.findById(student.getId()).orElse(null);
-    if (student.getId() == 0 ){
-      student.setId(existingStudent.getId());
+    Optional<Student> optionalStudent = studentRepository.findById(student.getId());
+    Student existingStudent = optionalStudent.get();
+    if (optionalStudent.isPresent()){
+      if (student.getId() == 0 ){
+        student.setId(existingStudent.getId());
 
+      }
+      if (student.getName() == "" || student.getName() == null){
+        student.setName(existingStudent.getName());
+
+      }
+      if (student.getTechnology() == "" || student.getTechnology() == null){
+        student.setTechnology(existingStudent.getTechnology());
+
+      }
+      existingStudent.setId(student.getId());
+      existingStudent.setName(student.getName());
+      existingStudent.setTechnology(student.getTechnology());
+
+      return studentRepository.save(existingStudent);
     }
-    if (student.getName() == "" || student.getName() == null){
-      student.setName(existingStudent.getName());
-
+    else {
+      throw new NotFoundException("Student Not Found");
     }
-    if (student.getTechnology() == "" || student.getTechnology() == null){
-      student.setTechnology(existingStudent.getTechnology());
 
-    }
-    existingStudent.setId(student.getId());
-    existingStudent.setName(student.getName());
-    existingStudent.setTechnology(student.getTechnology());
-
-    return studentRepository.save(existingStudent);
 
   }
 
